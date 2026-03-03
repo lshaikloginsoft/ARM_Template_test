@@ -55,7 +55,7 @@ export function validateJwt(req, res, next) {
     const decoded = jwt.decode(token);
     const validationOptions = {
       audience: [
-        `api://outlook-addin-vmray.azurewebsites.net/${process.env.CLIENT_ID}`
+        `api://outlook-web-app.azurewebsites.net/${process.env.CLIENT_ID}`
       ],
     };
 

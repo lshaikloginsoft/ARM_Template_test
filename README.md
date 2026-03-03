@@ -87,7 +87,7 @@ The Web App will now be provisioned.
 
     ![webappopeninportal](images/5webapp-open-in-portal.png)
 
-    * In the Azure Portal → **Overview pane**, copy the domain name: `outlook-addin-vmray.azurewebsites.net`
+    * In the Azure Portal → **Overview pane**, copy the domain name: `outlook-web-app.azurewebsites.net`
 
     ![webappdomain](images/6webapp-domain.png)
 
@@ -333,7 +333,7 @@ const urlProd = "yourdomain.azurewebsites.net";
     ```
 * #### With Replace AppDomain
 ```xml
-    <IconUrl DefaultValue="https://outlook-addin-vmray.azurewebsites.net/assets/icon-128.png"/>
+    <IconUrl DefaultValue="https://outlook-web-app.azurewebsites.net/assets/icon-128.png"/>
 ```
 * #### Next update `WebApplicationInfo` section with 
     `Client_Id` and `Application ID URI`  value

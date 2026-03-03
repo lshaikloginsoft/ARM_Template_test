@@ -6,11 +6,11 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Report Phishing"/>
   <Description DefaultValue="Forwards phishing emails to Security Team for analysis."/>
-  <IconUrl DefaultValue="https://outlook-addin-vmray.azurewebsites.net/assets/icon-128.png"/>
-  <HighResolutionIconUrl DefaultValue="https://outlook-addin-vmray.azurewebsites.net/assets/icon-filled.png"/>
-  <SupportUrl DefaultValue="https://outlook-addin-vmray.azurewebsites.net/help"/>
+  <IconUrl DefaultValue="https://outlook-web-app.azurewebsites.net/assets/icon-128.png"/>
+  <HighResolutionIconUrl DefaultValue="https://outlook-web-app.azurewebsites.net/assets/icon-filled.png"/>
+  <SupportUrl DefaultValue="https://outlook-web-app.azurewebsites.net/help"/>
   <AppDomains>
-    <AppDomain>https://outlook-addin-vmray.azurewebsites.net</AppDomain>
+    <AppDomain>https://outlook-web-app.azurewebsites.net</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -23,7 +23,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://outlook-addin-vmray.azurewebsites.net/taskpane.html"/>
+        <SourceLocation DefaultValue="https://outlook-web-app.azurewebsites.net/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -69,12 +69,12 @@
       </Hosts>
       <Resources>
         <bt:Images>
-          <bt:Image id="Icon.16x16" DefaultValue="https://outlook-addin-vmray.azurewebsites.net/assets/icon-16.png"/>
-          <bt:Image id="Icon.32x32" DefaultValue="https://outlook-addin-vmray.azurewebsites.net/assets/icon-32.png"/>
-          <bt:Image id="Icon.80x80" DefaultValue="https://outlook-addin-vmray.azurewebsites.net/assets/icon-80.png"/>
+          <bt:Image id="Icon.16x16" DefaultValue="https://outlook-web-app.azurewebsites.net/assets/icon-16.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://outlook-web-app.azurewebsites.net/assets/icon-32.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://outlook-web-app.azurewebsites.net/assets/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="Taskpane.Url" DefaultValue="https://outlook-addin-vmray.azurewebsites.net/taskpane.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://outlook-web-app.azurewebsites.net/taskpane.html"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="GroupLabel" DefaultValue="Security"/>
@@ -86,7 +86,7 @@
       </Resources>
       <WebApplicationInfo>
         <Id>147b90e4-536b-4d3a-9a5a-058abb17e506</Id>
-        <Resource>api://outlook-addin-vmray.azurewebsites.net/147b90e4-536b-4d3a-9a5a-058abb17e506</Resource>
+        <Resource>api://outlook-web-app.azurewebsites.net/147b90e4-536b-4d3a-9a5a-058abb17e506</Resource>
         <Scopes>
           <Scope>Mail.Send</Scope>
           <Scope>Mail.ReadWrite</Scope>

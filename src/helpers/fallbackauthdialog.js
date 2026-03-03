@@ -3,7 +3,7 @@ import { forwardMailToMiddleTier } from "./middle-tier-calls";
 
 const clientId = "147b90e4-536b-4d3a-9a5a-058abb17e506"; //Replace with your client ID
 const accessScope = 
-     `api://outlook-addin-vmray.azurewebsites.net/147b90e4-536b-4d3a-9a5a-058abb17e506/access_as_user`; //Replace with Scope value
+     `api://outlook-web-app.azurewebsites.net/147b90e4-536b-4d3a-9a5a-058abb17e506/access_as_user`; //Replace with Scope value
 const loginRequest = {
   scopes: [accessScope]
 };
@@ -12,7 +12,7 @@ const msalConfig = {
   auth: {
     clientId: clientId,
     authority: "https://login.microsoftonline.com/df620235-50d7-4400-bb7e-3b112e9b1ff4",// Replace with your tenant Id
-    redirectUri: "https://outlook-addin-vmray.azurewebsites.net/fallbackauthdialog.html", //replace with your fallback redirect URI
+    redirectUri: "https://outlook-web-app.azurewebsites.net/fallbackauthdialog.html", //replace with your fallback redirect URI
     navigateToLoginRequestUrl: false,
   },
   cache: {
