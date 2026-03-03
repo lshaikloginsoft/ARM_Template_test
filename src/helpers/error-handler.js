@@ -7,7 +7,7 @@ export function handleClientSideErrors(error) {
 
     case 13001:
       // No one signed into Office
-      showMessage("❌ You are not signed into Office. Please sign in and try again.");
+      invokeFallBackDialog = true;
       return invokeFallBackDialog;
 
     case 13002:

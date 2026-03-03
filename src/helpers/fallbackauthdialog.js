@@ -16,8 +16,8 @@ const msalConfig = {
     navigateToLoginRequestUrl: false,
   },
   cache: {
-    cacheLocation: "localStorage", // Needed to avoid "User login is required" error.
-    storeAuthStateInCookie: true, // Recommended to avoid certain IE/Edge issues.
+    cacheLocation: "sessionStorage", 
+    storeAuthStateInCookie: true, 
   },
   system: {
     loggerOptions: {
