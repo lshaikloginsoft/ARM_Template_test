@@ -10,7 +10,7 @@ import { validateJwt } from "./ssoauth-helper";
 
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.set("port", port);
 
@@ -22,25 +22,13 @@ app.use(logger("dev"));
 app.use(cookieParser());
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
-/* Turn off caching when developing */
-if (process.env.NODE_ENV !== "production") {
-  app.use(express.static(path.join(process.cwd(), "dist"), { etag: false }));
 
-  app.use(function (req, res, next) {
-    res.header("Cache-Control", "private, no-cache, no-store, must-revalidate");
-    res.header("Expires", "-1");
-    res.header("Pragma", "no-cache");
-    next();
-  });
-} else {
-  // In production mode, let static files be cached.
-  app.use(express.static(path.join(process.cwd())));
-  console.log("static set up: " + path.join(process.cwd()));
-}
+app.use(express.static(path.join(process.cwd(), "dist")));
+console.log("Serving static from:", path.join(process.cwd(), "dist"));
 
 const indexRouter = express.Router();
 indexRouter.get("/", function (req, res) {
-  res.sendFile("/taskpane.html", { root: __dirname });
+  res.sendFile(path.join(process.cwd(), "dist", "taskpane.html"));
 });
 
 // Route APIs
@@ -67,4 +55,4 @@ app.use(function (err, req, res, next) {
   });
 });
 
-app.listen(process.env.PORT, () => console.log("Server listening on port: " + process.env.PORT));
+app.listen(port, () => console.log("Server listening on port: " + port));
