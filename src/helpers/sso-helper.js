@@ -12,11 +12,17 @@ export async function forwardMail(messageId, callback, onTokenAcquired) {
       middletierToken = await Office.auth.getAccessToken({
         allowSignInPrompt: false
       });
-    } catch {
+    } catch(err) {
       console.warn("Silent SSO failed, retrying with signin prompt", err);
-      middletierToken = await Office.auth.getAccessToken({
-        allowSignInPrompt: true
-      });
+      try {
+        middletierToken = await Office.auth.getAccessToken({
+          allowSignInPrompt: true
+        });
+      } catch (err2) {
+        console.warn("SSO failed, using dialog fallback", err2);
+        dialogFallback(callback, messageId, onTokenAcquired);
+        return;
+      }
     }
 
     if (onTokenAcquired) {
@@ -45,15 +51,8 @@ export async function forwardMail(messageId, callback, onTokenAcquired) {
     callback(response);
 
   } catch (exception) {
-    if (exception.code && handleClientSideErrors(exception)) {
-      dialogFallback(callback, messageId, onTokenAcquired);
-      return;
-    }
-
-    callback({
-      forward: { success: false, error: "Unable to authenticate your session. Please try again." },
-      move: null
-    });
+    console.warn("SSO flow failed, falling back to dialog auth", exception);
+    dialogFallback(callback, messageId, onTokenAcquired);
   }
 }
 
@@ -67,13 +66,15 @@ async function handleAADErrors(response, callback, messageId, onTokenAcquired) {
 
     try {
       const newToken = await Office.auth.getAccessToken({
-        allowSignInPrompt: true
+        allowSignInPrompt: true,
       });
 
       const retryResponse = await forwardMailToMiddleTier(newToken, messageId);
       callback(retryResponse);
       return;
-    } catch {
+    } catch (exception) {
+        console.error("Authentication failed", exception);
+        dialogFallback(callback, messageId, onTokenAcquired);
     }
   }
 
