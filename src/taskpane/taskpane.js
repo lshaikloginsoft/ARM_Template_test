@@ -30,6 +30,8 @@ export async function run() {
   reportBtn.classList.add("btn-loading");
   showProgress(CONFIG.UI.REQUEST_PERMISSIONS);
 
+  await new Promise(resolve => setTimeout(resolve, 50));
+
   try {
     const item = Office.context.mailbox.item;
 
