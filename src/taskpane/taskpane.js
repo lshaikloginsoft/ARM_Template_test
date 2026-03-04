@@ -3,35 +3,40 @@ import CONFIG from "../config";
 
 let reportBtn, cancelBtn, statusEl, progressContainer, progressMsg;
 
-document.addEventListener("DOMContentLoaded", () => {
-  const confirmEl = document.getElementById("confirmText");
-  if (confirmEl) {
-    confirmEl.innerText = CONFIG.UI.CONFIRM_DIALOG;
-  }
-});
-
 Office.onReady((info) => {
   if (info.host === Office.HostType.Outlook) {
-    // Cache DOM elements once
+
+    // Cache DOM elements
     reportBtn = document.getElementById("reportBtn");
     cancelBtn = document.getElementById("cancelBtn");
     statusEl = document.getElementById("status");
     progressContainer = document.getElementById("progressContainer");
     progressMsg = document.getElementById("progressMsg");
 
-    // Assign event handlers
+    const confirmEl = document.getElementById("confirmText");
+    if (confirmEl) {
+      confirmEl.innerText = CONFIG.UI.CONFIRM_DIALOG;
+    }
+
+    // Attach event handlers
     reportBtn?.addEventListener("click", run);
     cancelBtn?.addEventListener("click", closeTaskPane);
   }
 });
 
-export async function run() {
+export function run() {
+  if (reportBtn.disabled) return;
+
   reportBtn.disabled = true;
   reportBtn.classList.add("btn-loading");
+
   showProgress(CONFIG.UI.REQUEST_PERMISSIONS);
 
-  await new Promise(resolve => setTimeout(resolve, 50));
+  // Allow UI to render before starting heavy work
+  setTimeout(startReportProcess, 0);
+}
 
+async function startReportProcess() {
   try {
     const item = Office.context.mailbox.item;
 
@@ -40,12 +45,11 @@ export async function run() {
       Office.MailboxEnums.RestVersion.v2_0
     );
 
+    showProgress(CONFIG.UI.PROCESSING);
+
     await forwardMail(
       messageId,
-      handleResponse,
-      () => {
-        showProgress(CONFIG.UI.PROCESSING);
-      }
+      handleResponse
     );
 
   } catch (err) {
@@ -62,27 +66,28 @@ function handleResponse(response) {
   hideProgress();
   resetReportButton();
 
+  let message = CONFIG.UI.FAILED_TO_REPORT;
+
   if (response.forward?.success && response.move?.success) {
-    show(CONFIG.UI.SUCCESS_MESSAGE);
+    message = CONFIG.UI.SUCCESS_MESSAGE;
   }
   else if (response.forward?.success && !response.move?.success) {
-    show(CONFIG.UI.MOVE_FAILED_TEXT);
+    message = CONFIG.UI.MOVE_FAILED_TEXT;
   }
-  else {
-    const err = response.forward?.error;
-    if (err) {
-      show(`${CONFIG.UI.FAILED_TO_REPORT} ${err.replace(/^❌\s*/, "")}`);
-    } else {
-      show(CONFIG.UI.FAILED_TO_REPORT);
-    }
+  else if (response.forward?.error) {
+    message = `${CONFIG.UI.FAILED_TO_REPORT} ${response.forward.error.replace(/^❌\s*/, "")}`;
   }
 
+  show(message);
+
+  // Keep success message visible long enough
   setTimeout(() => {
     closeTaskPane();
-  }, 3500);
+  }, 5500);
 }
 
-// UI helpers
+
+// UI Helpers
 function resetReportButton() {
   reportBtn.disabled = false;
   reportBtn.classList.remove("btn-loading");
