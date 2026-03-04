@@ -64,9 +64,8 @@ export function validateJwt(req, res, next) {
   const validationOptions = {
     audience: [
       `api://${req.headers.host}/${process.env.CLIENT_ID}`,
-    ],
-    issuer: `https://login.microsoftonline.com/${process.env.TENANT_ID}/v2.0`
-  };
+    ]
+    };
 
   jwt.verify(token, getSigningKeys, validationOptions, (err) => {
     if (err) {

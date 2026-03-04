@@ -19,7 +19,7 @@ export async function forwardMailToMiddleTier(middletierToken,  messageId) {
       return err.responseJSON;
     }
     return {
-      forward: { success: false, error: "" },
+      forward: { success: false, error: "❌ Server error, please try again later" },
       move: null
     };
   }
