@@ -1,7 +1,7 @@
 export async function forwardMailToMiddleTier(middletierToken,  messageId) {
   try {
     const response = await fetch("/forwardMail", {
-      type: "POST",
+      method: "POST",
       headers: { 
         "Authorization": "Bearer " + middletierToken,
         "Content-Type": "application/json" 
@@ -14,12 +14,12 @@ export async function forwardMailToMiddleTier(middletierToken,  messageId) {
     return data;
   } catch (err) {
      // If backend returned structured JSON, return it
-    if (err.responseJSON) {
+    console.error("forwardMailToMiddleTier error:", err);
+     if (err.responseJSON) {
       return err.responseJSON;
     }
-
     return {
-      forward: { success: false, error: "❌ Server error, please try again later" },
+      forward: { success: false, error: "" },
       move: null
     };
   }

@@ -6,7 +6,7 @@ const nodeExternals = require("webpack-node-externals");
 const path = require("path");
 
 const urlDev = "localhost:3000/";
-const urlProd = process.env.ADDIN_BASE_URL; 
+const urlProd = process.env.APP_DOMAIN; 
 
 module.exports = (env, options) => {
   const dev = options.mode === "development";

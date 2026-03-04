@@ -8,7 +8,7 @@ const loginRequest = {
 async function loadConfig() {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = `${window.location.origin}/runtime-config.js`;
+    script.src = "/runtime-config.js";
     script.onload = () => resolve(window.APP_CONFIG);
     script.onerror = reject;
     document.head.appendChild(script);
@@ -23,7 +23,7 @@ async function initializeMsal() {
 
   const clientId = cfg.clientId;
   const tenantId = cfg.tenantId;
-  const domain = window.location.hostname;
+  const domain = cfg.domain;
 
   const accessScope =
     `api://${domain}/${clientId}/access_as_user`;
@@ -94,6 +94,7 @@ Office.onReady(async () => {
 });
 
 function handleResponse(response) {
+  if (!response) return;
   if (response.tokenType === "id_token") {
     console.log("LoggedIn");
     localStorage.setItem("loggedIn", "yes");

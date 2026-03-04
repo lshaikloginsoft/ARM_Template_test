@@ -23,7 +23,7 @@ console.log("Serving static from:", path.join(process.cwd(), "dist"));
 
 const indexRouter = express.Router();
 indexRouter.get("/", function (req, res) {
-  res.sendFile(path.join(process.cwd(), "dist", "taskpane.html"));
+  res.status(404).send("Not intended for browser use");
 });
 
 // Route APIs
@@ -34,7 +34,7 @@ indexRouter.get("/runtime-config.js", function (req, res) {
     window.APP_CONFIG = {
       clientId: "${process.env.CLIENT_ID}",
       tenantId: "${process.env.TENANT_ID}",
-      domain: "${req.headers.host}"
+      domain: "${process.env.APP_DOMAIN}"
     };
   `);
 });
