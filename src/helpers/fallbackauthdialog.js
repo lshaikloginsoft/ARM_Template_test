@@ -8,7 +8,7 @@ const loginRequest = {
 async function loadConfig() {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = "/runtime-config.js";
+    script.src = `${window.location.origin}/runtime-config.js`;
     script.onload = () => resolve(window.APP_CONFIG);
     script.onerror = reject;
     document.head.appendChild(script);
