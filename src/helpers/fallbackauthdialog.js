@@ -6,8 +6,13 @@ const loginRequest = {
 };
 
 async function loadConfig() {
-  await import("/runtime-config.js");
-  return window.APP_CONFIG;
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "/runtime-config.js";
+    script.onload = () => resolve(window.APP_CONFIG);
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
 }
 
 let publicClientApp = null;

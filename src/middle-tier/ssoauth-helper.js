@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import form from "form-urlencoded";
 import jwt from "jsonwebtoken";
 import { JwksClient } from "jwks-rsa";
