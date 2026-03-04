@@ -1,9 +1,4 @@
 const CONFIG = {
-  SECURITY: {
-    RECIPIENT: "lathisha3101@outlook.com",
-    ALLOWED_RECIPIENT_BASE_DOMAIN: "outlook.com",
-  },
-
   EMAIL: {
     SUBJECT: "Phishing Report - Outlook Add-in",
     EML_FILENAME: "reported_email.eml",

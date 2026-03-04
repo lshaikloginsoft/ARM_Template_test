@@ -5,6 +5,7 @@ import { mapGraphErrorToUiMessage } from "./error-mapper";
 
 const domain = "graph.microsoft.com";
 const version = "v1.0";
+const recipient = process.env.RECIPIENT;
 const GRAPH_TIMEOUT = 20000;   //20 seconds
 
 
@@ -37,7 +38,6 @@ async function withRetry(operation, description) {
 export async function forwardMail(req, res) {
 
   try {
-    const recipient = CONFIG.SECURITY.RECIPIENT;
 
     if (!recipient || recipient.trim() === "") {
       return res.send({
@@ -135,7 +135,6 @@ async function fetchMime(graphToken, messageId) {
 }
 
 async function forwardMessage(graphToken, mimeBuffer) {
-  const recipient = CONFIG.SECURITY.RECIPIENT;
   const base64Mime = mimeBuffer.toString("base64");
 
   await withRetry(
@@ -365,12 +364,12 @@ function isValidRecipient(email) {
   if (parts.length !== 2) return false;
 
   const domain = parts[1];
-  const base = CONFIG.SECURITY.ALLOWED_RECIPIENT_BASE_DOMAIN.toLowerCase();
+  const base_domain = process.env.ALLOWED_RECIPIENT_BASE_DOMAIN.toLowerCase();
 
-  if (domain === base) return true;
+  if (domain === base_domain) return true;
 
-  if (domain.endsWith("." + base)) {
-    const sub = domain.slice(0, domain.length - base.length - 1);
+  if (domain.endsWith("." + base_domain)) {
+    const sub = domain.slice(0, domain.length - base_domain.length - 1);
     if (!sub) return false;
     if (sub.includes("..")) return false;
     return true;

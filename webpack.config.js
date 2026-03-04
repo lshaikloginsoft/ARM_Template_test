@@ -3,6 +3,7 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
+const path = require("path");
 
 const urlDev = "localhost:3000/";
 const urlProd = process.env.ADDIN_BASE_URL; 
@@ -19,8 +20,8 @@ module.exports = (env, options) => {
       },
       output: {
         filename: "[name].js",
-        publicPath: "/",
-        clean: true
+        path: path.resolve(__dirname, "dist"),
+        publicPath: "/"
       },
       resolve: {
         extensions: [".html", ".js"],
@@ -93,13 +94,22 @@ module.exports = (env, options) => {
     {
       devtool: dev ? "source-map" : false,
       target: "node",
+
       entry: {
         middletier: "./src/middle-tier/app.js",
       },
+
+      output: {
+        filename: "[name].js",
+        path: path.resolve(__dirname, "dist")
+      },
+
       externals: [nodeExternals()],
+
       resolve: {
         extensions: [".js"],
       },
+
       module: {
         rules: [
           {
@@ -110,8 +120,7 @@ module.exports = (env, options) => {
             },
           },
         ],
-      },
-
+      }
     },
   ];
 
