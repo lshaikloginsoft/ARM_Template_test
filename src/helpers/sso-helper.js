@@ -10,13 +10,12 @@ export async function forwardMail(messageId, callback, onTokenAcquired) {
 
     try {
       middletierToken = await Office.auth.getAccessToken({
-        allowSignInPrompt: false,
-        forMSGraphAccess: true,
+        allowSignInPrompt: false
       });
     } catch {
+      console.warn("Silent SSO failed, retrying with signin prompt", err);
       middletierToken = await Office.auth.getAccessToken({
-        allowSignInPrompt: true,
-        forMSGraphAccess: true,
+        allowSignInPrompt: true
       });
     }
 
@@ -68,8 +67,7 @@ async function handleAADErrors(response, callback, messageId, onTokenAcquired) {
 
     try {
       const newToken = await Office.auth.getAccessToken({
-        allowSignInPrompt: true,
-        forMSGraphAccess: true,
+        allowSignInPrompt: true
       });
 
       const retryResponse = await forwardMailToMiddleTier(newToken, messageId);

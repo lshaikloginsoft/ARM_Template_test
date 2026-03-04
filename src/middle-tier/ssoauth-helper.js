@@ -7,15 +7,23 @@ import { JwksClient } from "jwks-rsa";
 const DISCOVERY_KEYS_ENDPOINT =
   `https://login.microsoftonline.com/${process.env.TENANT_ID}/discovery/v2.0/keys`;
 
+const jwksClient = new JwksClient({
+  jwksUri: DISCOVERY_KEYS_ENDPOINT,
+  cache: true,
+  rateLimit: true,
+});
+
 export async function getAccessToken(authorization) {
   if (!authorization) {
-    let error = new Error("No Authorization header was found.");
-    return Promise.reject(error);
+    throw new Error("Missing Authorization header");
   } else {
     const [, /* schema */ assertion] = authorization.split(" ");
 
-
-    const tokenScopes = jwt.decode(assertion).scp.split(" ");
+    const decoded = jwt.decode(assertion);
+    if (!decoded || !decoded.scp) {
+      throw new Error("Invalid token scope");
+    }
+    const tokenScopes = decoded.scp.split(" ");
     const accessAsUserScope = tokenScopes.find((scope) => scope === "access_as_user");
     if (!accessAsUserScope) {
       throw new Error("Missing access_as_user");
@@ -30,12 +38,9 @@ export async function getAccessToken(authorization) {
       resource: "https://graph.microsoft.com"
     };
 
-    const stsDomain = "https://login.microsoftonline.com";
-    const tenant = process.env.TENANT_ID;
-    const tokenURLSegment = "oauth2/token";
     const encodedForm = form(formParams);
 
-    const tokenResponse = await fetch(`${stsDomain}/${tenant}/${tokenURLSegment}`, {
+    const tokenResponse = await fetch(`https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/token`, {
       method: "POST",
       body: encodedForm,
       headers: {
@@ -43,6 +48,9 @@ export async function getAccessToken(authorization) {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
+    if (!tokenResponse.ok) {
+      throw new Error("Failed to obtain Graph access token");
+    }
     const json = await tokenResponse.json();
     return json;
   }
@@ -50,32 +58,32 @@ export async function getAccessToken(authorization) {
 
 export function validateJwt(req, res, next) {
   const authHeader = req.headers.authorization;
-  if (authHeader) {
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.decode(token);
-    const validationOptions = {
-      audience: [
-        `api://outlook-web-app.azurewebsites.net/${process.env.CLIENT_ID}`
-      ],
-    };
-
-    jwt.verify(token, getSigningKeys, validationOptions, (err) => {
-      if (err) {
-        console.log(err);
-        return res.sendStatus(403);
-      }
-
-      next();
-    });
+  if (!authHeader) {
+    return res.sendStatus(401);
   }
+  const token = authHeader.split(" ")[1];
+  const validationOptions = {
+    audience: [
+      `api://${req.headers.host}/${process.env.CLIENT_ID}`,
+    ],
+    issuer: `https://login.microsoftonline.com/${process.env.TENANT_ID}/v2.0`
+  };
+
+  jwt.verify(token, getSigningKeys, validationOptions, (err) => {
+    if (err) {
+      console.error("JWT validation failed: ",err.message);
+      return res.sendStatus(403);
+    }
+
+    next();
+  });
 }
 
 function getSigningKeys(header, callback) {
-  var client = new JwksClient({
-    jwksUri: DISCOVERY_KEYS_ENDPOINT,
-  });
-
-  client.getSigningKey(header.kid, function (err, key) {
+  jwksClient.getSigningKey(header.kid, function (err, key) {
+    if (err) {
+      return callback(err);
+    }
     callback(null, key.getPublicKey());
   });
 }

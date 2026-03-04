@@ -5,7 +5,7 @@ import { mapGraphErrorToUiMessage } from "./error-mapper";
 
 const domain = "graph.microsoft.com";
 const version = "v1.0";
-
+const GRAPH_TIMEOUT = 20000;   //20 seconds
 
 
 async function withRetry(operation, description) {
@@ -197,6 +197,10 @@ function makeGraphRawCall(accessToken, apiUrl) {
 
     const request = https.request(options, (response) => {
 
+      request.setTimeout(GRAPH_TIMEOUT, () => {
+        request.destroy(new Error("Graph request timeout"));
+      });
+
       const chunks = [];
 
       response.on("data", chunk => chunks.push(chunk));
@@ -248,6 +252,10 @@ function makeGraphApiCall(accessToken, apiUrl, method, body = null) {
     };
 
     const request = https.request(options, (response) => {
+
+      request.setTimeout(GRAPH_TIMEOUT, () => {
+        request.destroy(new Error("Graph request timeout"));
+      });
 
       let responseBody = "";
 

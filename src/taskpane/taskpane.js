@@ -20,8 +20,8 @@ Office.onReady((info) => {
     progressMsg = document.getElementById("progressMsg");
 
     // Assign event handlers
-    reportBtn.onclick = run;
-    cancelBtn.onclick = closeTaskPane;
+    reportBtn?.addEventListener("click", run);
+    cancelBtn?.addEventListener("click", closeTaskPane);
   }
 });
 
@@ -49,7 +49,7 @@ export async function run() {
   } catch (err) {
     console.error(err);
     hideProgress();
-    show("❌ Error preparing request.");
+    show(CONFIG.UI.FAILED_TO_REPORT);
     resetReportButton();
   }
 }

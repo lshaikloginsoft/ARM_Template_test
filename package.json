@@ -1,17 +1,16 @@
 {
-  "name": "office-addin-taskpane-sso-js",
-  "version": "0.0.0",
+  "name": "outlook-phishing-report-addin",
+  "version": "1.0.0",
+  "description": "Outlook add-in for reporting suspicious emails to the security team",
   "private": true,
-  "config": {
-    "app_to_debug": "outlook",
-    "app_type_to_debug": "desktop",
-    "dev_server_port": 3000
-  },
+
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
+    "dev": "webpack --mode development --watch",
     "start": "node dist/middletier.js"
   },
+
   "dependencies": {
     "@azure/msal-browser": "^2.28.1",
     "@babel/core": "^7.29.0",
@@ -21,31 +20,23 @@
     "cookie-parser": "^1.4.6",
     "copy-webpack-plugin": "^12.0.2",
     "core-js": "^3.36.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^16.4.5",
     "express": "4.21.2",
-    "file-loader": "^6.2.0",
     "form-urlencoded": "3.0.0",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.6.0",
     "http-errors": "~1.6.3",
-    "https-browserify": "^1.0.0",
-    "jquery": "^3.5.1",
     "jsonwebtoken": "9.0.0",
     "jwks-rsa": "2.1.4",
     "morgan": "1.9.1",
-    "node-fetch": "^2.6.1",
-    "office-addin-sso": "^3.0.4",
     "regenerator-runtime": "^0.14.1",
-    "source-map-loader": "^5.0.0",
-    "stream-http": "^3.2.0",
-    "url": "0.11.0",
-    "webpack": "^5.105.3",
+    "webpack": "^5.105.4",
     "webpack-cli": "^5.1.4",
     "webpack-node-externals": "^3.0.0"
   },
-  "prettier": "office-addin-prettier-config",
+
   "browserslist": [
-    "last 2 versions",
-    "ie 11"
+    "last 2 Chrome versions",
+    "last 2 Edge versions"
   ]
 }

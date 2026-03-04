@@ -5,25 +5,27 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 
 const urlDev = "localhost:3000/";
-const urlProd = "outlook-web-app.azurewebsites.net"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+const urlProd = process.env.ADDIN_BASE_URL; 
 
-module.exports = async (env, options) => {
+module.exports = (env, options) => {
   const dev = options.mode === "development";
   const config = [
     {
-      devtool: "source-map",
+      devtool: dev ? "source-map" : false,
       entry: {
         polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
         taskpane: ["./src/taskpane/taskpane.js", "./src/taskpane/taskpane.html"],
         fallbackauthdialog: "./src/helpers/fallbackauthdialog.js",
       },
+      output: {
+        filename: "[name].js",
+        publicPath: "/",
+        clean: true
+      },
       resolve: {
         extensions: [".html", ".js"],
         fallback: {
-          buffer: require.resolve("buffer/"),
-          http: require.resolve("stream-http"),
-          https: require.resolve("https-browserify"),
-          url: require.resolve("url/"),
+          buffer: require.resolve("buffer/")
         },
       },
       module: {
@@ -44,7 +46,7 @@ module.exports = async (env, options) => {
             test: /\.(png|jpg|jpeg|gif|ico)$/,
             type: "asset/resource",
             generator: {
-              filename: "assets/[name][ext][query]",
+              filename: "assets/[name][ext]",
             },
           },
         ],
@@ -84,15 +86,15 @@ module.exports = async (env, options) => {
           ],
         }),
       ],
+      optimization: {
+        minimize: !dev
+      }
     },
     {
-      devtool: "source-map",
+      devtool: dev ? "source-map" : false,
       target: "node",
       entry: {
         middletier: "./src/middle-tier/app.js",
-      },
-      output: {
-        clean: true,
       },
       externals: [nodeExternals()],
       resolve: {

@@ -44,9 +44,9 @@
           <DesktopFormFactor>
             <ExtensionPoint xsi:type="MessageReadCommandSurface">
               <OfficeTab id="TabDefault">
-                <Group id="msgComposeGroup">
+                <Group id="msgReadGroup">
                   <Label resid="GroupLabel"/>
-                  <Control xsi:type="Button" id="msgComposeOpenPaneButton">
+                  <Control xsi:type="Button" id="msgReadOpenPaneButton">
                     <Label resid="TaskpaneButton.Label"/>
                     <Supertip>
                       <Title resid="TaskpaneButton.Label"/>

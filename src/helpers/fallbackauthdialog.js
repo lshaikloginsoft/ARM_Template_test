@@ -1,50 +1,67 @@
 import { LogLevel, PublicClientApplication } from "@azure/msal-browser";
 import { forwardMailToMiddleTier } from "./middle-tier-calls";
 
-const clientId = "147b90e4-536b-4d3a-9a5a-058abb17e506"; //Replace with your client ID
-const accessScope = 
-     `api://outlook-web-app.azurewebsites.net/147b90e4-536b-4d3a-9a5a-058abb17e506/access_as_user`; //Replace with Scope value
 const loginRequest = {
-  scopes: [accessScope]
+  scopes: []
 };
 
-const msalConfig = {
-  auth: {
-    clientId: clientId,
-    authority: "https://login.microsoftonline.com/df620235-50d7-4400-bb7e-3b112e9b1ff4",// Replace with your tenant Id
-    redirectUri: "https://outlook-web-app.azurewebsites.net/fallbackauthdialog.html", //replace with your fallback redirect URI
-    navigateToLoginRequestUrl: false,
-  },
-  cache: {
-    cacheLocation: "sessionStorage", 
-    storeAuthStateInCookie: true, 
-  },
-  system: {
-    loggerOptions: {
-      loggerCallback: (level, message, containsPii) => {
-        if (containsPii) {
-          return;
-        }
-        switch (level) {
-          case LogLevel.Error:
-            console.error(message);
-            return;
-          case LogLevel.Info:
-            console.info(message);
-            return;
-          case LogLevel.Verbose:
-            console.debug(message);
-            return;
-          case LogLevel.Warning:
-            console.warn(message);
-            return;
-        }
-      },
+async function loadConfig() {
+  await import("/runtime-config.js");
+  return window.APP_CONFIG;
+}
+
+let publicClientApp = null;
+
+async function initializeMsal() {
+
+  const cfg = await loadConfig();
+
+  const clientId = cfg.clientId;
+  const tenantId = cfg.tenantId;
+  const domain = window.location.hostname;
+
+  const accessScope =
+    `api://${domain}/${clientId}/access_as_user`;
+
+  loginRequest.scopes = [accessScope];
+
+  const msalConfig = {
+    auth: {
+      clientId: clientId,
+      authority: `https://login.microsoftonline.com/${tenantId}`,
+      redirectUri: `https://${domain}/fallbackauthdialog.html`,
+      navigateToLoginRequestUrl: false
     },
-  },
-};
+    cache: {
+      cacheLocation: "sessionStorage",
+      storeAuthStateInCookie: true
+    },
+    system: {
+      loggerOptions: {
+        loggerCallback: (level, message, containsPii) => {
+          if (containsPii) return;
 
-const publicClientApp = new PublicClientApplication(msalConfig);
+          switch (level) {
+            case LogLevel.Error:
+              console.error(message);
+              break;
+            case LogLevel.Info:
+              console.info(message);
+              break;
+            case LogLevel.Verbose:
+              console.debug(message);
+              break;
+            case LogLevel.Warning:
+              console.warn(message);
+              break;
+          }
+        }
+      }
+    }
+  };
+
+  publicClientApp = new PublicClientApplication(msalConfig);
+}
 
 let loginDialog = null;
 let homeAccountId = null;
@@ -52,7 +69,8 @@ let callbackFunction = null;
 let storedMessageId = null;
 let tokenAcquiredHandler = null;
 
-Office.onReady(() => {
+Office.onReady(async () => {
+  await initializeMsal();
   if (Office.context.ui.messageParent) {
     publicClientApp
       .handleRedirectPromise()
@@ -62,20 +80,9 @@ Office.onReady(() => {
         Office.context.ui.messageParent(JSON.stringify({ status: "failure", result: error }));
       });
 
-    // The very first time the add-in runs on a developer's computer, msal.js hasn't yet
-    // stored login data in localStorage. So a direct call of acquireTokenRedirect
-    // causes the error "User login is required". Once the user is logged in successfully
-    // the first time, msal data in localStorage will prevent this error from ever hap-
-    // pening again; but the error must be blocked here, so that the user can login
-    // successfully the first time. To do that, call loginRedirect first instead of
-    // acquireTokenRedirect.
     if (localStorage.getItem("loggedIn") === "yes") {
       publicClientApp.acquireTokenRedirect(loginRequest);
     } else {
-      // This will login the user and then the (response.tokenType === "id_token")
-      // path in authCallback below will run, which sets localStorage.loggedIn to "yes"
-      // and then the dialog is redirected back to this script, so the
-      // acquireTokenRedirect above runs.
       publicClientApp.loginRedirect(loginRequest);
     }
   }

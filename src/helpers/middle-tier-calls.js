@@ -1,18 +1,17 @@
-import * as $ from "jquery";
-
 export async function forwardMailToMiddleTier(middletierToken,  messageId) {
   try {
-    const response = await $.ajax({
+    const response = await fetch("/forwardMail", {
       type: "POST",
-      url: `/forwardMail`,
-      headers: { Authorization: "Bearer " + middletierToken },
-      data: JSON.stringify({
+      headers: { 
+        "Authorization": "Bearer " + middletierToken,
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify({
         messageId: messageId
       }),
-      contentType: "application/json",
-      cache: false,
     });
-    return response;
+    const data = await response.json();
+    return data;
   } catch (err) {
      // If backend returned structured JSON, return it
     if (err.responseJSON) {
