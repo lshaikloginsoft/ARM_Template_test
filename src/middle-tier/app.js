@@ -39,6 +39,14 @@ indexRouter.get("/runtime-config.js", function (req, res) {
   `);
 });
 
+indexRouter.get("/health", function (req, res) {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 indexRouter.post("/forwardMail", validateJwt, forwardMail);
 
 
